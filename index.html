@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Arduino Traffic Light Control</title>
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.2.3/firebase-database.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+        }
+        .traffic-light {
+            padding: 10px;
+            background: #333;
+            border-radius: 10px;
+            width: 60px;
+            margin: 20px auto;
+        }
+        .light {
+            width: 50px;
+            height: 50px;
+            background-color: #333; /* Default 'off' color */
+            border-radius: 50%;
+            margin: 5px auto;
+            transition: background-color 0.3s; /* Smooth transition for color change */
+        }
+        .led-box {
+            margin: 10px;
+            padding: 20px;
+            display: inline-block;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        .led-label {
+            display: block;
+            font-size: 16px;
+            color: #666;
+            margin: 20px;
+        }
+        .led-label input {
+            width: 20px;
+            height: 20px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background: #007BFF;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        var firebaseConfig = {
+            apiKey: "AIzaSyB9v8Lq2K6e7KcGPixv8MxkkI0gSQYzSK8",
+            authDomain: "sit210-4-2hd.firebaseapp.com",
+            databaseURL: "https://sit210-4-2hd-default-rtdb.firebaseio.com",
+            projectId: "sit210-4-2hd",
+            storageBucket: "sit210-4-2hd.appspot.com",
+            messagingSenderId: "261463123446",
+            appId: "1:261463123446:web:3843f0c6d19952b68e53d7"
+        };
+        firebase.initializeApp(firebaseConfig);
+
+        function toggleLED(selectedColor) {
+            // Turn all lights off
+            const lights = ['red', 'green', 'blue'];
+            lights.forEach(light => {
+                document.getElementById(light + '-light').style.backgroundColor = '#333';
+            });
+
+            // Turn the selected light on
+            document.getElementById(selectedColor + '-light').style.backgroundColor = selectedColor;
+
+            // Update Firebase values
+            lights.forEach(color => {
+                firebase.database().ref(color).set(color === selectedColor);
+            });
+        }
+
+        function resetToRed() {
+            toggleLED('red');
+            document.getElementById('radio-red').checked = true;
+        }
+
+        // Set default state when page loads
+        window.onload = resetToRed;
+    </script>
+</head>
+<body>
+    <h1>Arduino Traffic Light Control</h1>
+    <div class="traffic-light">
+        <div id="red-light" class="light"></div>
+        <div id="green-light" class="light"></div>
+        <div id="blue-light" class="light"></div>
+    </div>
+    <div class="led-box">
+        <form>
+            <label class="led-label">
+                <input type="radio" name="led" id="radio-red" onclick="toggleLED('red')"> Red LED
+            </label>
+            <label class="led-label">
+                <input type="radio" name="led" id="radio-green" onclick="toggleLED('green')"> Green LED
+            </label>
+            <label class="led-label">
+                <input type="radio" name="led" id="radio-blue" onclick="toggleLED('blue')"> Blue LED
+            </label>
+        </form>
+        <button onclick="resetToRed()">Reset</button>
+    </div>
+</body>
+</html>
